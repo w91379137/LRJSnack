@@ -1,4 +1,5 @@
 import { DivSize, GameMapLength } from '../constants';
+import { Point2D } from '../types';
 
 export class Render {
 
@@ -28,6 +29,17 @@ export class Render {
         div.style.marginLeft = (x - GameMapLength / 2) * (DivSize + 1) + 'px';
         div.style.marginTop = (y - GameMapLength / 2) * (DivSize + 1) + 'px';
 
+        div.id = 'D' + x + '_' + y;
+
         document.querySelector('body').appendChild(div);
+    }
+
+    renderSnack(snack: Array<Point2D>) {
+
+        snack.forEach(point => {
+            let id = '#D' + point.x + '_' + point.y;
+            let div = document.querySelector(id) as HTMLDivElement;
+            div.style.backgroundColor = 'gray';
+        });
     }
 }
