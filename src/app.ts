@@ -29,6 +29,7 @@ window.addEventListener("load", () => {
 
     let render = new view.Render();
 
+    let fps$ = interval(1000 / 10)
     let ticks$ = interval(700);
 
     let direction$ = new BehaviorSubject<Point2D>({ x: 1, y: 0 });
@@ -47,8 +48,7 @@ window.addEventListener("load", () => {
     );
 
     let scene$: Observable<Scene> = combineLatest(snake$, snake => ({ snake }));
-
-    scene$.subscribe(data => {
+    fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(data => {
 
         render.renderSnack(data.snake);
         

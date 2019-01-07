@@ -1,5 +1,5 @@
 import { Point2D } from '../types';
-import { SnackLength } from '../constants';
+import { SnackLength, GameMapLength } from '../constants';
 
 export function initSnake(): Array<Point2D> {
   let snake: Array<Point2D> = [];
@@ -13,25 +13,19 @@ export function initSnake(): Array<Point2D> {
 
 export function moveSnake(snake, [direction, snakeLength]) {
 
-  console.log(snake, direction, snakeLength);
-
   let nx = snake[0].x;
   let ny = snake[0].y;
 
   nx += 1 * direction.x;
+  nx %= GameMapLength;
   ny += 1 * direction.y;
+  ny %= GameMapLength;
 
-  let tail;
-
-  if (snakeLength > snake.length) {
-    tail = { x: nx, y: ny };
-  } else {
-    tail = snake.pop();
-    tail.x = nx;
-    tail.y = ny;
+  let add = { x: nx, y: ny };
+  if (snakeLength <= snake.length) {
+    snake.pop();
   }
-
-  snake.unshift(tail);
+  snake.unshift(add);
 
   return snake;
 }

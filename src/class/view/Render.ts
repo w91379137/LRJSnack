@@ -34,10 +34,27 @@ export class Render {
         document.querySelector('body').appendChild(div);
     }
 
+    snack_old_id = [];
     renderSnack(snack: Array<Point2D>) {
 
-        snack.forEach(point => {
-            let id = '#D' + point.x + '_' + point.y;
+        let snack_new_id = snack.map(p => '#D' + p.x + '_' + p.y);
+
+        let white = this.snack_old_id.filter(x => !snack_new_id.includes(x));
+        let gray = snack_new_id.filter(x => !this.snack_old_id.includes(x));
+
+        this.snack_old_id = snack_new_id;
+
+        white.forEach(id => {
+            let div = document.querySelector(id) as HTMLDivElement;
+            if (div) {
+                div.style.backgroundColor = 'white';
+            }
+            else {
+                console.log('id not find', id);
+            }
+        });
+
+        gray.forEach(id => {
             let div = document.querySelector(id) as HTMLDivElement;
             if (div) {
                 div.style.backgroundColor = 'gray';
