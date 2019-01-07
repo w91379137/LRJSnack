@@ -4,7 +4,11 @@
   "description": "Learn rxjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server . -c-1",
+    "build:develop": "webpack -d --color --mode development",
+    "build:release": "webpack -d --color --mode production",
+    "watch": "webpack --watch",
+    "clean": "rm ./dist/*"
   },
   "repository": {
     "type": "git",
@@ -15,5 +19,13 @@
   "bugs": {
     "url": "https://github.com/w91379137/LRJSnack/issues"
   },
-  "homepage": "https://github.com/w91379137/LRJSnack#readme"
+  "dependencies": {
+    "rxjs": "5.5.2"
+  },
+  "devDependencies": {
+    "tslint": "5.8.0",
+    "tslint-loader": "3.5.3",
+    "ts-loader": "^5.2.0",
+    "typescript": "2.6.1"
+  }
 }
