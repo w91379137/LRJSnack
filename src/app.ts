@@ -23,13 +23,15 @@ import {
 import * as view from './class/view';
 import { SnackLength } from './class/constants';
 import { Point2D, Scene } from './class/types';
-import { initSnake } from './class/model/Snake';
+import { initSnake, moveSnake } from './class/model/Snake';
 
 window.addEventListener("load", () => {
 
     let render = new view.Render();
 
     let ticks$ = interval(700);
+
+    let direction$ = new BehaviorSubject<Point2D>({ x: 1, y: 0 });
 
     let length$ = new BehaviorSubject<number>(SnackLength);
 
@@ -39,8 +41,8 @@ window.addEventListener("load", () => {
     );
 
     let snake$: Observable<Array<Point2D>> = ticks$.pipe(
-        withLatestFrom(snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
-        scan(snack => snack, initSnake()),
+        withLatestFrom(direction$, snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
+        scan(moveSnake, initSnake()),
         share()
     );
 

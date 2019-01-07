@@ -39,7 +39,12 @@ export class Render {
         snack.forEach(point => {
             let id = '#D' + point.x + '_' + point.y;
             let div = document.querySelector(id) as HTMLDivElement;
-            div.style.backgroundColor = 'gray';
+            if (div) {
+                div.style.backgroundColor = 'gray';
+            }
+            else {
+                console.log('id not find', id);
+            }
         });
     }
 }
