@@ -27,6 +27,10 @@ import { Point2D, Scene } from './class/types';
 import { initSnake, moveSnake, nextDirection, eat } from './class/model/Snake';
 import { initApples } from './class/model/Apple';
 
+// 來源
+// https://juejin.im/post/5acb32dd5188255c637b41fb
+
+
 window.addEventListener("load", () => {
 
     let render = new view.Render();
