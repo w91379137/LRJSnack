@@ -1,5 +1,7 @@
 import { Point2D } from '../types';
 import { SnackLength, GameMapLength } from '../constants';
+import { checkCollision } from './Function';
+import { getRandomPosition } from './Apple';
 
 export function initSnake(): Array<Point2D> {
   let snake: Array<Point2D> = [];
@@ -40,4 +42,17 @@ export function nextDirection(previous, next) {
   }
 
   return next;
+}
+
+export function eat(apples: Array<Point2D>, snake) {
+  let head = snake[0];
+
+  for (let i = 0; i < apples.length; i++) {
+    if (checkCollision(apples[i], head)) {
+      apples.splice(i, 1);
+      return [...apples, getRandomPosition(snake)];
+    }
+  }
+
+  return apples;
 }

@@ -24,7 +24,8 @@ import {
 import * as view from './class/view';
 import { SnackLength, DIRECTIONS, Key } from './class/constants';
 import { Point2D, Scene } from './class/types';
-import { initSnake, moveSnake, nextDirection } from './class/model/Snake';
+import { initSnake, moveSnake, nextDirection, eat } from './class/model/Snake';
+import { initApples } from './class/model/Apple';
 
 window.addEventListener("load", () => {
 
@@ -55,9 +56,16 @@ window.addEventListener("load", () => {
         share()
     );
 
-    let scene$: Observable<Scene> = combineLatest(snake$, snake => ({ snake }));
+    let apples$ = snake$.pipe(
+        scan(eat, initApples()),
+        distinctUntilChanged(),
+        share()
+      );
+
+    let scene$: Observable<Scene> = combineLatest(snake$, apples$, (snake, apples) => ({ snake, apples }));
     fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(data => {
 
+        render.renderSnackApples(data.apples);
         render.renderSnack(data.snake);
         
     });

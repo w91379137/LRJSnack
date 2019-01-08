@@ -5,6 +5,8 @@ export const GameMapLength = 30;
 
 export const SnackLength = 5;
 
+export const AppleCount = 2;
+
 export const DIRECTIONS: { [email: number]: Point2D; } = {
     37: { x: -1, y: 0 },
     39: { x: 1, y: 0 },

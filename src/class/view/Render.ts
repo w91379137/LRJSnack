@@ -41,9 +41,9 @@ export class Render {
     snack_old_id = [];
     renderSnack(snack: Array<Point2D>) {
 
-        let snack_new_id = snack.map(p => '#' + this.divID(p));
+        let new_id = snack.map(p => '#' + this.divID(p));
 
-        let remove = this.snack_old_id.filter(x => !snack_new_id.includes(x));
+        let remove = this.snack_old_id.filter(x => !new_id.includes(x));
         remove.forEach(id => {
             let div = document.querySelector(id) as HTMLDivElement;
             if (div) {
@@ -54,7 +54,7 @@ export class Render {
             }
         });
 
-        let add = snack_new_id.filter(x => !this.snack_old_id.includes(x));
+        let add = new_id.filter(x => !this.snack_old_id.includes(x));
         add.forEach(id => {
             let div = document.querySelector(id) as HTMLDivElement;
             if (div) {
@@ -65,6 +65,36 @@ export class Render {
             }
         });
 
-        this.snack_old_id = snack_new_id;
+        this.snack_old_id = new_id;
+    }
+
+    apple_old_id = [];
+    renderSnackApples(apples: Array<Point2D>) {
+
+        let new_id = apples.map(p => '#' + this.divID(p));
+
+        let remove = this.apple_old_id.filter(x => !new_id.includes(x));
+        remove.forEach(id => {
+            let div = document.querySelector(id) as HTMLDivElement;
+            if (div) {
+                div.style.backgroundColor = 'white';
+            }
+            else {
+                console.log('id not find', id);
+            }
+        });
+
+        let add = new_id.filter(x => !this.apple_old_id.includes(x));
+        add.forEach(id => {
+            let div = document.querySelector(id) as HTMLDivElement;
+            if (div) {
+                div.style.backgroundColor = 'red';
+            }
+            else {
+                console.log('id not find', id);
+            }
+        });
+
+        this.apple_old_id = new_id;
     }
 }
