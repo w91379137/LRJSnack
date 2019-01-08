@@ -4,8 +4,8 @@ import { SnackLength, GameMapLength } from '../constants';
 export function initSnake(): Array<Point2D> {
   let snake: Array<Point2D> = [];
 
-  for (let i = SnackLength - 1; i >= 0; i--) {
-    snake.push({ x: i, y: 0 });
+  for (let i = 0; i < SnackLength; i++) {
+    snake.unshift({ x: i, y: 0 });
   }
 
   return snake;
