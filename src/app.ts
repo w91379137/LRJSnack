@@ -43,10 +43,10 @@ window.addEventListener("load", () => {
         distinctUntilChanged()
     );
 
-    let length$ = new BehaviorSubject<number>(SnackLength);
+    let snackGrow$ = new BehaviorSubject<number>(SnackLength);
 
-    let snakeLength$ = length$.pipe(
-        scan((step, snakeLength) => snakeLength + step),
+    let snakeLength$ = snackGrow$.pipe(
+        scan((acc, value) => value + acc),
         share()
     );
 
@@ -64,7 +64,7 @@ window.addEventListener("load", () => {
 
     apples$.pipe(
         skip(1),
-        tap(() => length$.next(1))
+        tap(() => snackGrow$.next(1))
     ).subscribe();
 
     let scene$: Observable<Scene> = combineLatest(snake$, apples$, (snake, apples) => ({ snake, apples }));
