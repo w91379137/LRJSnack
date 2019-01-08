@@ -10,12 +10,12 @@ export class Render {
 
         x_array.forEach(x => {
             y_array.forEach(y => {
-                this.createDiv(x, y);
+                this.createDiv({x, y});
             });
         });
     }
 
-    createDiv(x, y) {
+    createDiv(p: Point2D) {
         let div = document.createElement('div');
         div.style.width = DivSize + 'px';
         div.style.height = DivSize + 'px';
@@ -26,25 +26,25 @@ export class Render {
         div.style.left = '50%';
         div.style.top = '50%';
 
-        div.style.marginLeft = (x - GameMapLength / 2) * (DivSize + 1) + 'px';
-        div.style.marginTop = (y - GameMapLength / 2) * (DivSize + 1) + 'px';
+        div.style.marginLeft = (p.x - GameMapLength / 2) * (DivSize + 1) + 'px';
+        div.style.marginTop = (p.y - GameMapLength / 2) * (DivSize + 1) + 'px';
 
-        div.id = 'D' + x + '_' + y;
+        div.id = this.divID(p);
 
         document.querySelector('body').appendChild(div);
+    }
+
+    divID(p: Point2D) {
+        return 'D' + '_' + p.x + '_' + p.y;
     }
 
     snack_old_id = [];
     renderSnack(snack: Array<Point2D>) {
 
-        let snack_new_id = snack.map(p => '#D' + p.x + '_' + p.y);
+        let snack_new_id = snack.map(p => '#' + this.divID(p));
 
-        let white = this.snack_old_id.filter(x => !snack_new_id.includes(x));
-        let gray = snack_new_id.filter(x => !this.snack_old_id.includes(x));
-
-        this.snack_old_id = snack_new_id;
-
-        white.forEach(id => {
+        let remove = this.snack_old_id.filter(x => !snack_new_id.includes(x));
+        remove.forEach(id => {
             let div = document.querySelector(id) as HTMLDivElement;
             if (div) {
                 div.style.backgroundColor = 'white';
@@ -54,7 +54,8 @@ export class Render {
             }
         });
 
-        gray.forEach(id => {
+        let add = snack_new_id.filter(x => !this.snack_old_id.includes(x));
+        add.forEach(id => {
             let div = document.querySelector(id) as HTMLDivElement;
             if (div) {
                 div.style.backgroundColor = 'gray';
@@ -63,5 +64,7 @@ export class Render {
                 console.log('id not find', id);
             }
         });
+
+        this.snack_old_id = snack_new_id;
     }
 }
