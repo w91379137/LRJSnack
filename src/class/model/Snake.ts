@@ -16,9 +16,9 @@ export function moveSnake(snake, [direction, snakeLength]) {
   let nx = snake[0].x;
   let ny = snake[0].y;
 
-  nx += 1 * direction.x;
+  nx += (GameMapLength + direction.x);
   nx %= GameMapLength;
-  ny += 1 * direction.y;
+  ny += (GameMapLength + direction.y);
   ny %= GameMapLength;
 
   let add = { x: nx, y: ny };
