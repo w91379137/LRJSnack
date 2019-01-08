@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { interval } from 'rxjs/observable/interval';
 import { combineLatest } from 'rxjs/observable/combineLatest';
+import { fromEvent } from 'rxjs/observable/fromEvent';
 
 import {
     map,
@@ -21,18 +22,25 @@ import {
 } from 'rxjs/operators';
 
 import * as view from './class/view';
-import { SnackLength } from './class/constants';
+import { SnackLength, DIRECTIONS, Key } from './class/constants';
 import { Point2D, Scene } from './class/types';
-import { initSnake, moveSnake } from './class/model/Snake';
+import { initSnake, moveSnake, nextDirection } from './class/model/Snake';
 
 window.addEventListener("load", () => {
 
     let render = new view.Render();
 
     let fps$ = interval(1000 / 10)
-    let ticks$ = interval(700);
+    let ticks$ = interval(200);
+    let keydown$ = fromEvent(document, 'keydown');
 
-    let direction$ = new BehaviorSubject<Point2D>({ x: 1, y: 0 });
+    let direction$ = keydown$.pipe(
+        map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
+        filter(direction => !!direction),
+        startWith(DIRECTIONS[Key.RIGHT]),
+        scan(nextDirection),
+        distinctUntilChanged()
+      );
 
     let length$ = new BehaviorSubject<number>(SnackLength);
 
