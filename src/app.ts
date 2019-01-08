@@ -41,7 +41,7 @@ window.addEventListener("load", () => {
         startWith(DIRECTIONS[Key.RIGHT]),
         scan(nextDirection),
         distinctUntilChanged()
-      );
+    );
 
     let length$ = new BehaviorSubject<number>(SnackLength);
 
@@ -60,7 +60,12 @@ window.addEventListener("load", () => {
         scan(eat, initApples()),
         distinctUntilChanged(),
         share()
-      );
+    );
+
+    apples$.pipe(
+        skip(1),
+        tap(() => length$.next(1))
+    ).subscribe();
 
     let scene$: Observable<Scene> = combineLatest(snake$, apples$, (snake, apples) => ({ snake, apples }));
     fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(data => {
