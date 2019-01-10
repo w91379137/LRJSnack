@@ -5,6 +5,7 @@ import { getRandomPosition } from './Apple';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import {
   map,
@@ -38,8 +39,12 @@ export class Snake {
   keydown$ = new Subject<KeyboardEvent>();
   ticks$ = new Subject<number>();
 
+  snackGrow$ = new BehaviorSubject<number>(SnackLength);
+
   // output
   direction$: Observable<Point2D>;
+  snakeLength$: Observable<number>;
+  snake$: Observable<Array<Point2D>>;
 
   constructor() {
 
@@ -50,6 +55,19 @@ export class Snake {
       scan(nextDirection),
       distinctUntilChanged()
     );
+
+    this.snakeLength$ = this.snackGrow$.pipe(
+      scan((acc, value) => value + acc),
+      share()
+    );
+
+    this.snake$ = this.ticks$.pipe(
+      withLatestFrom(this.direction$, this.snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
+      scan(moveSnake, initSnake()),
+      share()
+    );
+
+
 
   }
 }

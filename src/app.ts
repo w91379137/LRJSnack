@@ -44,20 +44,7 @@ window.addEventListener('load', () => {
     // connect
     userEvent.keydown$.subscribe( snack.keydown$ );
 
-    let snackGrow$ = new BehaviorSubject<number>(SnackLength);
-
-    let snakeLength$ = snackGrow$.pipe(
-        scan((acc, value) => value + acc),
-        share()
-    );
-
-    let snake$: Observable<Array<Point2D>> = systemEvent.ticks$.pipe(
-        withLatestFrom(snack.direction$, snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
-        scan(moveSnake, initSnake()),
-        share()
-    );
-
-    let apples$ = snake$.pipe(
+    let apples$ = snack.snake$.pipe(
         scan(eat, initApples()),
         distinctUntilChanged(),
         share()
@@ -65,15 +52,15 @@ window.addEventListener('load', () => {
 
     apples$.pipe(
         skip(1),
-        tap(() => snackGrow$.next(1))
+        tap(() => snack.snackGrow$.next(1))
     ).subscribe();
 
-    let score$ = snakeLength$.pipe(
+    let score$ = snack.snakeLength$.pipe(
         startWith(0),
         scan((score, _) => score + 100),
     );
 
-    let scene$: Observable<Scene> = combineLatest(snake$, apples$, score$, (snake, apples, score) => ({ snake, apples, score }));
+    let scene$: Observable<Scene> = combineLatest(snack.snake$, apples$, score$, (snake, apples, score) => ({ snake, apples, score }));
     systemEvent.fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(scene => {
 
         render.renderApples(scene.apples);
