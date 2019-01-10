@@ -55,7 +55,8 @@ export class Snake {
       filter(direction => !!direction),
       startWith(DIRECTIONS[Key.RIGHT]),
       scan(this.nextDirection),
-      distinctUntilChanged()
+      distinctUntilChanged(),
+      share()
     );
 
     this.length$ = this.stretch$.pipe(

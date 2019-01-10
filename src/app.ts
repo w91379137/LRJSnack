@@ -35,36 +35,43 @@ window.addEventListener('load', () => {
     let userEvent = new controller.UserEvent();
 
     // model
+    let gameManager = new model.GameManager();
     let snack = new model.Snake();
+    let apple = new model.Apple();
 
     // view
     let render = new view.Render();
 
     // connect
+    systemEvent.ticks$.subscribe( snack.ticks$ );
     userEvent.keydown$.subscribe( snack.keydown$ );
 
-    let apples$ = snack.body$.pipe(
-        scan(eat, initApples()),
-        distinctUntilChanged(),
-        share()
-    );
+    // apple.postions$.subscribe( gameManager.apple$ );
+    // snack.body$.subscribe( gameManager.snack$ );
+    snack.body$.subscribe( render.snack$ );
 
-    apples$.pipe(
-        skip(1),
-        tap(() => snack.stretch$.next(1))
-    ).subscribe();
+    // let apples$ = snack.body$.pipe(
+    //     scan(eat, initApples()),
+    //     distinctUntilChanged(),
+    //     share()
+    // );
 
-    let score$ = snack.length$.pipe(
-        startWith(0),
-        scan((score, _) => score + 100),
-    );
+    // apples$.pipe(
+    //     skip(1),
+    //     tap(() => snack.stretch$.next(1))
+    // ).subscribe();
 
-    let scene$: Observable<Scene> = combineLatest(snack.body$, apples$, score$, (snake, apples, score) => ({ snake, apples, score }));
-    systemEvent.fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(scene => {
+    // let score$ = snack.length$.pipe(
+    //     startWith(0),
+    //     scan((score, _) => score + 100),
+    // );
 
-        render.renderApples(scene.apples);
-        render.renderSnack(scene.snake);
-        render.renderScore(scene.score);
+    // let scene$: Observable<Scene> = combineLatest(snack.body$, apples$, score$, (snake, apples, score) => ({ snake, apples, score }));
+    // systemEvent.fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(scene => {
 
-    });
+    //     render.renderApples(scene.apples);
+    //     render.renderSnack(scene.snake);
+    //     render.renderScore(scene.score);
+
+    // });
 });

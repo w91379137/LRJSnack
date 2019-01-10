@@ -1,7 +1,10 @@
 import { DivSize, GameMapLength } from '../constants';
 import { Point2D } from '../types';
+import { Subject } from 'rxjs/Subject';
 
 export class Render {
+
+    snack$ = new Subject<Array<Point2D>>();
 
     constructor() {
 
@@ -16,6 +19,10 @@ export class Render {
             y_array.forEach(y => {
                 this.createDiv({ x, y });
             });
+        });
+
+        this.snack$.subscribe(snack => {
+            this.renderSnack(snack);
         });
     }
 
