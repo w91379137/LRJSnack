@@ -1,5 +1,5 @@
 import { Point2D } from '../types';
-import { SnackLength, GameMapLength } from '../constants';
+import { GameMapLength } from '../constants';
 import { checkCollision } from './Function';
 import { getRandomPosition } from './Apple';
 
@@ -33,18 +33,20 @@ enum Key {
   DOWN = 40
 }
 
+const initLength = 5;
+
 export class Snake {
 
   // input
   keydown$ = new Subject<KeyboardEvent>();
   ticks$ = new Subject<number>();
 
-  snackGrow$ = new BehaviorSubject<number>(SnackLength);
+  stretch$ = new BehaviorSubject<number>(initLength);
 
   // output
   direction$: Observable<Point2D>;
-  snakeLength$: Observable<number>;
-  snake$: Observable<Array<Point2D>>;
+  length$: Observable<number>;
+  body$: Observable<Array<Point2D>>;
 
   constructor() {
 
@@ -52,65 +54,63 @@ export class Snake {
       map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
       filter(direction => !!direction),
       startWith(DIRECTIONS[Key.RIGHT]),
-      scan(nextDirection),
+      scan(this.nextDirection),
       distinctUntilChanged()
     );
 
-    this.snakeLength$ = this.snackGrow$.pipe(
+    this.length$ = this.stretch$.pipe(
       scan((acc, value) => value + acc),
       share()
     );
 
-    this.snake$ = this.ticks$.pipe(
-      withLatestFrom(this.direction$, this.snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
-      scan(moveSnake, initSnake()),
+    this.body$ = this.ticks$.pipe(
+      withLatestFrom(this.direction$, this.length$, (_, direction, snakeLength) => [direction, snakeLength]),
+      scan(this.moveSnake, this.initSnake()),
       share()
     );
-
-
-
-  }
-}
-
-export function initSnake(): Array<Point2D> {
-  let snake: Array<Point2D> = [];
-
-  for (let i = 0; i < SnackLength; i++) {
-    snake.unshift({ x: i, y: 0 });
   }
 
-  return snake;
-}
+  // ============================================================
+  initSnake(): Array<Point2D> {
+    let snake: Array<Point2D> = [];
 
-export function moveSnake(snake, [direction, snakeLength]) {
+    for (let i = 0; i < initLength; i++) {
+      snake.unshift({ x: i, y: 0 });
+    }
 
-  let nx = snake[0].x;
-  let ny = snake[0].y;
-
-  nx += (GameMapLength + direction.x);
-  nx %= GameMapLength;
-  ny += (GameMapLength + direction.y);
-  ny %= GameMapLength;
-
-  let add = { x: nx, y: ny };
-  if (snakeLength <= snake.length) {
-    snake.pop();
-  }
-  snake.unshift(add);
-
-  return snake;
-}
-
-export function nextDirection(previous, next) {
-  let isOpposite = (previous: Point2D, next: Point2D) => {
-    return next.x === previous.x * -1 || next.y === previous.y * -1;
-  };
-
-  if (isOpposite(previous, next)) {
-    return previous;
+    return snake;
   }
 
-  return next;
+  moveSnake(snake, [direction, snakeLength]) {
+
+    let nx = snake[0].x;
+    let ny = snake[0].y;
+
+    nx += (GameMapLength + direction.x);
+    nx %= GameMapLength;
+    ny += (GameMapLength + direction.y);
+    ny %= GameMapLength;
+
+    let add = { x: nx, y: ny };
+    if (snakeLength <= snake.length) {
+      snake.pop();
+    }
+    snake.unshift(add);
+
+    return snake;
+  }
+
+  nextDirection(previous, next) {
+    let isOpposite = (previous: Point2D, next: Point2D) => {
+      return next.x === previous.x * -1 || next.y === previous.y * -1;
+    };
+
+    if (isOpposite(previous, next)) {
+      return previous;
+    }
+
+    return next;
+  }
 }
 
 export function eat(apples: Array<Point2D>, snake) {
