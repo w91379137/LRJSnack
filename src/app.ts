@@ -31,11 +31,11 @@ import { initApples } from './class/model/Apple';
 // https://juejin.im/post/5acb32dd5188255c637b41fb
 
 
-window.addEventListener("load", () => {
+window.addEventListener('load', () => {
 
     let render = new view.Render();
 
-    let fps$ = interval(1000 / 10)
+    let fps$ = interval(1000 / 10);
     let ticks$ = interval(200);
     let keydown$ = fromEvent(document, 'keydown');
 
@@ -71,11 +71,17 @@ window.addEventListener("load", () => {
         tap(() => snackGrow$.next(1))
     ).subscribe();
 
-    let scene$: Observable<Scene> = combineLatest(snake$, apples$, (snake, apples) => ({ snake, apples }));
-    fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(data => {
+    let score$ = snakeLength$.pipe(
+        startWith(0),
+        scan((score, _) => score + 100),
+    );
 
-        render.renderSnackApples(data.apples);
-        render.renderSnack(data.snake);
-        
+    let scene$: Observable<Scene> = combineLatest(snake$, apples$, score$, (snake, apples, score) => ({ snake, apples, score }));
+    fps$.pipe(withLatestFrom(scene$, (_, scene) => scene)).subscribe(scene => {
+
+        render.renderApples(scene.apples);
+        render.renderSnack(scene.snake);
+        render.renderScore(scene.score);
+
     });
 });

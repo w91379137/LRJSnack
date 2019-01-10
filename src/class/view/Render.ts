@@ -5,14 +5,34 @@ export class Render {
 
     constructor() {
 
+        // 產生計分
+        this.createScoreText();
+
+        // 產生方格
         let x_array = Array(GameMapLength).fill(0).map((_, index) => index);
         let y_array = Array(GameMapLength).fill(0).map((_, index) => index);
 
         x_array.forEach(x => {
             y_array.forEach(y => {
-                this.createDiv({x, y});
+                this.createDiv({ x, y });
             });
         });
+    }
+
+    scoreText: HTMLDivElement;
+    createScoreText() {
+        let div = document.createElement('div');
+
+        div.style.position = 'absolute';
+        div.style.left = '50%';
+        div.style.top = '50%';
+
+        div.style.zIndex = '-1';
+
+        document.querySelector('body').appendChild(div);
+
+        this.scoreText = div;
+        this.scoreText.innerHTML = '0';
     }
 
     createDiv(p: Point2D) {
@@ -22,12 +42,13 @@ export class Render {
         div.style.border = 'thin solid blue';
 
         div.style.position = 'absolute';
-
         div.style.left = '50%';
         div.style.top = '50%';
 
         div.style.marginLeft = (p.x - GameMapLength / 2) * (DivSize + 1) + 'px';
         div.style.marginTop = (p.y - GameMapLength / 2) * (DivSize + 1) + 'px';
+
+        div.style.opacity = '0.5';
 
         div.id = this.divID(p);
 
@@ -69,7 +90,7 @@ export class Render {
     }
 
     apple_old_id = [];
-    renderSnackApples(apples: Array<Point2D>) {
+    renderApples(apples: Array<Point2D>) {
 
         let new_id = apples.map(p => '#' + this.divID(p));
 
@@ -96,5 +117,9 @@ export class Render {
         });
 
         this.apple_old_id = new_id;
+    }
+
+    renderScore(score: number) {
+        this.scoreText.innerHTML = score.toString();
     }
 }
