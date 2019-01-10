@@ -17,9 +17,10 @@ import {
 } from 'rxjs/operators';
 
 import * as controller from './class/controller';
+import * as model from './class/model';
 import * as view from './class/view';
 
-import { SnackLength, DIRECTIONS, Key } from './class/constants';
+import { SnackLength } from './class/constants';
 import { Point2D, Scene } from './class/types';
 import { initSnake, moveSnake, nextDirection, eat } from './class/model/Snake';
 import { initApples } from './class/model/Apple';
@@ -35,18 +36,13 @@ window.addEventListener('load', () => {
     let userEvent = new controller.UserEvent();
 
     // model
+    let snack = new model.Snake();
 
     // view
     let render = new view.Render();
 
     // connect
-    let direction$ = userEvent.keydown$.pipe(
-        map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
-        filter(direction => !!direction),
-        startWith(DIRECTIONS[Key.RIGHT]),
-        scan(nextDirection),
-        distinctUntilChanged()
-    );
+    userEvent.keydown$.subscribe( snack.keydown$ );
 
     let snackGrow$ = new BehaviorSubject<number>(SnackLength);
 
@@ -56,7 +52,7 @@ window.addEventListener('load', () => {
     );
 
     let snake$: Observable<Array<Point2D>> = systemEvent.ticks$.pipe(
-        withLatestFrom(direction$, snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
+        withLatestFrom(snack.direction$, snakeLength$, (_, direction, snakeLength) => [direction, snakeLength]),
         scan(moveSnake, initSnake()),
         share()
     );

@@ -3,6 +3,57 @@ import { SnackLength, GameMapLength } from '../constants';
 import { checkCollision } from './Function';
 import { getRandomPosition } from './Apple';
 
+import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+
+import {
+  map,
+  filter,
+  scan,
+  startWith,
+  distinctUntilChanged,
+  share,
+  withLatestFrom,
+  tap,
+  skip
+} from 'rxjs/operators';
+
+const DIRECTIONS: { [key: number]: Point2D; } = {
+  37: { x: -1, y: 0 },
+  39: { x: 1, y: 0 },
+  38: { x: 0, y: -1 },
+  40: { x: 0, y: 1 }
+};
+
+enum Key {
+  LEFT = 37,
+  RIGHT = 39,
+  UP = 38,
+  DOWN = 40
+}
+
+export class Snake {
+
+  // input
+  keydown$ = new Subject<KeyboardEvent>();
+  ticks$ = new Subject<number>();
+
+  // output
+  direction$: Observable<Point2D>;
+
+  constructor() {
+
+    this.direction$ = this.keydown$.pipe(
+      map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
+      filter(direction => !!direction),
+      startWith(DIRECTIONS[Key.RIGHT]),
+      scan(nextDirection),
+      distinctUntilChanged()
+    );
+
+  }
+}
+
 export function initSnake(): Array<Point2D> {
   let snake: Array<Point2D> = [];
 
