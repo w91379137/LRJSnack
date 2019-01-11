@@ -5,6 +5,7 @@ import { Subject } from 'rxjs/Subject';
 export class Render {
 
     snack$ = new Subject<Array<Point2D>>();
+    apple$ = new Subject<Array<Point2D>>();
 
     constructor() {
 
@@ -24,6 +25,9 @@ export class Render {
         this.snack$.subscribe(snack => {
             this.renderSnack(snack);
         });
+        this.apple$.subscribe(apple => {
+            this.renderApples(apple);
+        })
     }
 
     scoreText: HTMLDivElement;

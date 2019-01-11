@@ -67,6 +67,7 @@ export class Snake {
     this.body$ = this.ticks$.pipe(
       withLatestFrom(this.direction$, this.length$, (_, direction, snakeLength) => [direction, snakeLength]),
       scan(this.moveSnake, this.initSnake()),
+      // tap(val => console.log(val)),
       share()
     );
   }

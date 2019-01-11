@@ -3,6 +3,7 @@ import { AppleCount, GameMapLength } from '../constants';
 import { checkCollision, getRandomNumber } from './Function';
 
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import {
     startWith,
@@ -14,21 +15,22 @@ import {
 export class Apple {
 
     // input
-    appleChange$: Observable<{ isAdd: boolean, point: Point2D }>;
+    appleChange$ = new Subject<{ isAdd: boolean, point: Point2D }>();
 
     // output
     postions$: Observable<Array<Point2D>>;
 
     constructor() {
 
-        // this.postions$ = this.appleChange$.pipe(
-        //     scan(this.changePostions, [])
-        // );
+        // this.postions$ = new BehaviorSubject<Array<Point2D>>([]);
 
-        this.postions$ = new BehaviorSubject<Array<Point2D>>([]);
+        this.postions$ = this.appleChange$.pipe(
+            scan(this.changePostions, [])
+        );
+        this.postions$.subscribe();
     }
 
-    changePostions(change: { isAdd: boolean, point: Point2D }, postions) {
+    changePostions(postions, change: { isAdd: boolean, point: Point2D }) {
 
         let p_c = change.point;
         if (change.isAdd) {

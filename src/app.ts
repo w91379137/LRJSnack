@@ -44,10 +44,16 @@ window.addEventListener('load', () => {
 
     // connect
     systemEvent.ticks$.subscribe( snack.ticks$ );
+
     userEvent.keydown$.subscribe( snack.keydown$ );
 
-    // apple.postions$.subscribe( gameManager.apple$ );
-    // snack.body$.subscribe( gameManager.snack$ );
+    gameManager.appleChange$.subscribe( apple.appleChange$ );
+    gameManager.snackStretch$.subscribe( snack.stretch$ );
+
+    apple.postions$.subscribe( gameManager.apple$ );
+    snack.body$.subscribe( gameManager.snack$ );
+
+    apple.postions$.subscribe( render.apple$ );
     snack.body$.subscribe( render.snack$ );
 
     // let apples$ = snack.body$.pipe(
