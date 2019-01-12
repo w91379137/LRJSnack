@@ -6,6 +6,7 @@ export class Render {
 
     snack$ = new Subject<Array<Point2D>>();
     apple$ = new Subject<Array<Point2D>>();
+    score$ = new Subject<number>();
 
     constructor() {
 
@@ -27,7 +28,11 @@ export class Render {
         });
         this.apple$.subscribe(apple => {
             this.renderApples(apple);
-        })
+        });
+
+        this.score$.subscribe(score => {
+            this.renderScore(score);
+        });
     }
 
     scoreText: HTMLDivElement;

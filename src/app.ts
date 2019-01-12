@@ -33,4 +33,5 @@ window.addEventListener('load', () => {
     // connect view
     apple.postions$.subscribe(render.apple$);
     snake.body$.subscribe(render.snack$);
+    gameManager.score$.subscribe(render.score$);
 });
