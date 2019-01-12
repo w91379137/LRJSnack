@@ -23,7 +23,7 @@ import {
 export class GameManager {
 
     // input
-    snack$ = new Subject<Array<Point2D>>();
+    snake$ = new Subject<Array<Point2D>>();
     apple$ = new BehaviorSubject<Array<Point2D>>([]);
 
     // output
@@ -32,12 +32,12 @@ export class GameManager {
 
     constructor() {
 
-        let data$: Observable<any> = combineLatest(this.snack$, this.apple$, (snake, apples) => ({ snake, apples }));
+        this.snake$.pipe(withLatestFrom(this.apple$, (snake, apples) => {
+            return { snake, apples };
+        })).subscribe(data => {
 
-        this.snack$.pipe(withLatestFrom(data$, (_, data) => data)).subscribe(data => {
-
-            let snake = data.snake as Array<Point2D>;
-            let apples = data.apples as Array<Point2D>;
+            let snake = data.snake;
+            let apples = data.apples;
 
             let head = snake[0];
 
