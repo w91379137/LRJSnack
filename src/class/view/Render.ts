@@ -35,7 +35,7 @@ export class Render {
         });
     }
 
-    scoreText: HTMLDivElement;
+    private scoreText: HTMLDivElement;
     createScoreText() {
         let div = document.createElement('div');
 
@@ -75,7 +75,7 @@ export class Render {
         return 'D' + '_' + p.x + '_' + p.y;
     }
 
-    snack_old_id = [];
+    private snack_old_id = [];
     renderSnack(snack: Array<Point2D>) {
 
         let new_id = snack.map(p => '#' + this.divID(p));
@@ -105,7 +105,7 @@ export class Render {
         this.snack_old_id = new_id;
     }
 
-    apple_old_id = [];
+    private apple_old_id = [];
     renderApples(apples: Array<Point2D>) {
 
         let new_id = apples.map(p => '#' + this.divID(p));
