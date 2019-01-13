@@ -114,16 +114,3 @@ export class Snake {
     return next;
   }
 }
-
-export function eat(apples: Array<Point2D>, snake) {
-  let head = snake[0];
-
-  for (let i = 0; i < apples.length; i++) {
-    if (checkCollision(apples[i], head)) {
-      apples.splice(i, 1);
-      return [...apples, getRandomPosition(snake)];
-    }
-  }
-
-  return apples;
-}
