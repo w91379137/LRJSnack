@@ -1,7 +1,5 @@
 import { Point2D } from '../types';
 import { GameMapLength } from '../constants';
-import { checkCollision } from './Function';
-import { getRandomPosition } from './Apple';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -15,11 +13,9 @@ import {
   distinctUntilChanged,
   share,
   withLatestFrom,
-  tap,
-  skip
 } from 'rxjs/operators';
 
-const DIRECTIONS: { [key: number]: Point2D; } = {
+const Direction: { [key: number]: Point2D; } = {
   37: { x: -1, y: 0 },
   39: { x: 1, y: 0 },
   38: { x: 0, y: -1 },
@@ -34,6 +30,7 @@ enum Key {
 }
 
 const initLength = 5;
+const initDirection = { x: 1, y: 0 };
 
 export class Snake {
 
@@ -51,9 +48,9 @@ export class Snake {
   constructor() {
 
     this.direction$ = this.keydown$.pipe(
-      map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
+      map((event: KeyboardEvent) => Direction[event.keyCode]),
       filter(direction => !!direction),
-      startWith(DIRECTIONS[Key.RIGHT]),
+      startWith(initDirection),
       scan(this.nextDirection),
       distinctUntilChanged(),
       share()
@@ -74,10 +71,10 @@ export class Snake {
 
   // ============================================================
   initSnake(): Array<Point2D> {
-    let snake: Array<Point2D> = [];
+    let snake: Array<Point2D> = [{ x: 0, y: 0 }];
 
     for (let i = 0; i < initLength; i++) {
-      snake.unshift({ x: i, y: 0 });
+      this.moveSnake(snake, [initDirection, initLength]);
     }
 
     return snake;

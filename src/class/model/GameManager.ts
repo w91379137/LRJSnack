@@ -1,23 +1,16 @@
 
+import { Point2D } from '../types';
+import { isEqualPoint, getRandomPosition } from './Function';
+import { AppleCount } from '../constants';
 
 import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subject } from 'rxjs/Subject';
-import { Point2D } from '../types';
-import { combineLatest } from 'rxjs/observable/combineLatest';
-import { checkCollision } from './Function';
-import { getRandomPosition } from './Apple';
-import { AppleCount } from '../constants';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+
 import {
-    map,
-    filter,
     scan,
-    startWith,
-    distinctUntilChanged,
     share,
     withLatestFrom,
-    tap,
-    skip
 } from 'rxjs/operators';
 
 export class GameManager {
@@ -50,7 +43,7 @@ export class GameManager {
 
             let isEat = false;
             for (let i = 0; i < apples.length; i++) {
-                if (checkCollision(apples[i], head)) {
+                if (isEqualPoint(apples[i], head)) {
                     this.appleChange$.next({ isAdd: false, point: apples[i] });
                     isEat = true;
                     this.scoreChange$.next(100);
